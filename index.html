@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rem to Pixel Converter</title>
+    
+    <link rel="icon" href="image_78.png">
+    <link rel="apple-touch-icon" href="image_78.png">
+
+    <style>
+        :root {
+            --main: #333;
+            --bg: #fff;
+            --accent: #eee;
+            --input-bg: #fafafa;
+            --radius: 15px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
+        .subtitle { font-size: 0.85rem; color: #666; font-weight: 500; margin-bottom: 30px; }
+
+        /* Base Size Config */
+        .base-config {
+            background: var(--input-bg);
+            padding: 15px;
+            border-radius: var(--radius);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .base-label { font-size: 0.75rem; font-weight: 800; color: #999; text-transform: uppercase; }
+        .base-control { display: flex; align-items: center; gap: 15px; }
+        .base-btn {
+            width: 35px; height: 35px; border-radius: 10px; border: none;
+            background: var(--main); color: #fff; font-size: 1.2rem; font-weight: bold;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .base-val { font-size: 1.2rem; font-weight: 800; min-width: 50px; }
+
+        /* Main Inputs */
+        .input-row { display: flex; gap: 15px; margin-bottom: 30px; }
+        .input-group { flex: 1; position: relative; text-align: left; }
+        .input-label { font-size: 0.7rem; font-weight: 800; color: #bbb; margin-left: 5px; margin-bottom: 5px; display: block; }
+        
+        input {
+            width: 100%;
+            padding: 18px;
+            border: 2px solid var(--accent);
+            border-radius: var(--radius);
+            background: var(--input-bg);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--main) !important;
+            box-sizing: border-box;
+            outline: none;
+            -webkit-appearance: none;
+            -webkit-text-fill-color: var(--main) !important;
+            opacity: 1 !important;
+        }
+        input::placeholder { color: #ccc; -webkit-text-fill-color: #ccc; }
+
+        /* Quick Table */
+        .scale-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .scale-item {
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+        .scale-item:active { background: var(--accent); transform: scale(0.97); }
+        .px-v { font-size: 0.9rem; font-weight: 800; }
+        .rem-v { font-size: 0.8rem; font-weight: 600; color: #999; }
+
+        /* Toast Message */
+        #toast {
+            position: fixed; top: 20px; background: var(--main); color: #fff;
+            padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+
+        footer { margin-top: 50px; font-size: 11px; color: #aaa; line-height: 1.8; }
+        footer a { color: inherit; text-decoration: none; }
+        .footer-btns { margin-top: 30px; }
+        .kofi-btn {
+            display: inline-block; background: var(--main); color: #fff;
+            padding: 12px 25px; border-radius: var(--radius);
+            text-decoration: none; font-weight: bold; font-size: 14px; margin-bottom: 12px;
+        }
+        .home-btn {
+            display: block; width: 60%; margin: 0 auto; background: var(--accent);
+            color: var(--main); border: none; padding: 10px;
+            border-radius: var(--radius); font-weight: 700; font-size: 13px; cursor: pointer;
+        }
+
+        #modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 100;
+        }
+        .modal-content {
+            background: #fff; width: 85%; max-width: 320px; padding: 30px;
+            border-radius: var(--radius); text-align: left; position: relative;
+        }
+        .close-x { position: absolute; top: 15px; right: 20px; font-size: 20px; color: #ccc; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div id="toast">Copied!</div>
+
+<div class="container">
+    <h1>Rem to Px</h1>
+    <p class="subtitle">Unit converter for modern developers.</p>
+
+    <div class="base-config">
+        <span class="base-label">Base Size</span>
+        <div class="base-control">
+            <button class="base-btn" onclick="updateBase(-1)">-</button>
+            <span class="base-val" id="baseDisplay">16px</span>
+            <button class="base-btn" onclick="updateBase(1)">+</button>
+        </div>
+    </div>
+
+    <div class="input-row">
+        <div class="input-group">
+            <span class="input-label">REM</span>
+            <input type="number" id="remInput" placeholder="1" step="0.1" oninput="convert('rem')">
+        </div>
+        <div class="input-group" style="display: flex; align-items: center; justify-content: center; padding-top: 20px; color: #ccc; font-weight: 800;">=</div>
+        <div class="input-group">
+            <span class="input-label">PX</span>
+            <input type="number" id="pxInput" placeholder="16" oninput="convert('px')">
+        </div>
+    </div>
+
+    <span class="base-label" style="display: block; text-align: left; margin-bottom: 10px;">Quick Scale (Tap to copy)</span>
+    <div class="scale-table" id="scaleTable">
+        </div>
+
+    <div class="footer-btns">
+        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕️buy me a coffee</a>
+        <button class="home-btn" onclick="showModal()">Add to Home Screen</button>
+    </div>
+
+    <footer>
+        <div>No login / No tracking / No ads / Browser only</div>
+        <div><a href="https://afrorakda.com/privacy/">Privacy Policy</a> / afrorakda © 2026</div>
+    </footer>
+</div>
+
+<div id="modal" onclick="hideModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close-x" onclick="hideModal()">×</span>
+        <h3>📱 Install</h3>
+        <p>Add to your home screen.</p>
+        <p>🍏 <strong>iPhone (Safari):</strong><br>Tap Share, then Add to Home Screen.</p>
+        <p>🤖 <strong>Android (Chrome):</strong><br>Tap Menu (⋮), then Add to Home Screen.</p>
+    </div>
+</div>
+
+<script>
+    let baseSize = 16;
+    const remInput = document.getElementById('remInput');
+    const pxInput = document.getElementById('pxInput');
+    const baseDisplay = document.getElementById('baseDisplay');
+    const scaleTable = document.getElementById('scaleTable');
+    const toast = document.getElementById('toast');
+
+    function updateBase(delta) {
+        baseSize += delta;
+        if (baseSize < 1) baseSize = 1;
+        baseDisplay.innerText = baseSize + 'px';
+        convert('rem'); // Recalculate based on current rem
+        renderTable();
+    }
+
+    function convert(type) {
+        if (type === 'rem') {
+            const val = parseFloat(remInput.value);
+            if (!isNaN(val)) {
+                pxInput.value = parseFloat((val * baseSize).toFixed(2));
+            } else {
+                pxInput.value = '';
+            }
+        } else {
+            const val = parseFloat(pxInput.value);
+            if (!isNaN(val)) {
+                remInput.value = parseFloat((val / baseSize).toFixed(4));
+            } else {
+                remInput.value = '';
+            }
+        }
+    }
+
+    function renderTable() {
+        const steps = [8, 12, 14, 16, 20, 24, 32, 40, 48, 64];
+        scaleTable.innerHTML = '';
+        steps.forEach(px => {
+            const rem = parseFloat((px / baseSize).toFixed(4));
+            const item = document.createElement('div');
+            item.className = 'scale-item';
+            item.onclick = () => copyText(`${rem}rem`);
+            item.innerHTML = `
+                <span class="px-v">${px}px</span>
+                <span class="rem-v">${rem}rem</span>
+            `;
+            scaleTable.appendChild(item);
+        });
+    }
+
+    async function copyText(txt) {
+        try {
+            await navigator.clipboard.writeText(txt);
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 1500);
+        } catch (err) {}
+    }
+
+    function showModal() { document.getElementById('modal').style.display = 'flex'; }
+    function hideModal() { document.getElementById('modal').style.display = 'none'; }
+
+    renderTable();
+</script>
+
+</body>
+</html>
