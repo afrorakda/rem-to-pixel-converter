@@ -12,9 +12,10 @@
         :root {
             --main: #333;
             --bg: #fff;
-            --accent: #eee;
+            --accent: #ccc; /* 濃く修正 */
             --input-bg: #fafafa;
             --radius: 15px;
+            --text-gray: #666; /* 視認性向上のための濃いグレー */
         }
 
         body {
@@ -36,43 +37,44 @@
             text-align: center;
         }
 
-        h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
-        .subtitle { font-size: 0.85rem; color: #666; font-weight: 500; margin-bottom: 30px; }
+        h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
+        .subtitle { font-size: 1rem; color: var(--text-gray); font-weight: 600; margin-bottom: 30px; }
 
         /* Base Size Config */
         .base-config {
             background: var(--input-bg);
-            padding: 15px;
+            padding: 18px;
             border-radius: var(--radius);
             margin-bottom: 25px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            border: 1px solid var(--accent);
         }
-        .base-label { font-size: 0.75rem; font-weight: 800; color: #999; text-transform: uppercase; }
+        .base-label { font-size: 0.9rem; font-weight: 800; color: var(--text-gray); text-transform: uppercase; }
         .base-control { display: flex; align-items: center; gap: 15px; }
         .base-btn {
-            width: 35px; height: 35px; border-radius: 10px; border: none;
-            background: var(--main); color: #fff; font-size: 1.2rem; font-weight: bold;
+            width: 40px; height: 40px; border-radius: 10px; border: none;
+            background: var(--main); color: #fff; font-size: 1.4rem; font-weight: bold;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
         .base-btn:active { opacity: 0.8; transform: scale(0.95); }
-        .base-val { font-size: 1.2rem; font-weight: 800; min-width: 50px; }
+        .base-val { font-size: 1.4rem; font-weight: 800; min-width: 60px; }
 
         /* Main Inputs */
         .input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
         .input-group { flex: 1; position: relative; text-align: left; }
-        .input-label { font-size: 0.7rem; font-weight: 800; color: #bbb; margin-left: 5px; margin-bottom: 5px; display: block; }
+        .input-label { font-size: 0.9rem; font-weight: 800; color: var(--main); margin-left: 5px; margin-bottom: 8px; display: block; }
         
         input {
             width: 100%;
-            padding: 18px;
-            padding-right: 40px; /* space for clear btn */
+            padding: 20px 15px;
+            padding-right: 40px;
             border: 2px solid var(--accent);
             border-radius: var(--radius);
             background: var(--input-bg);
-            font-size: 1.2rem;
-            font-weight: 700;
+            font-size: 1.4rem;
+            font-weight: 800;
             color: var(--main) !important;
             box-sizing: border-box;
             outline: none;
@@ -80,17 +82,17 @@
             -webkit-text-fill-color: var(--main) !important;
             opacity: 1 !important;
         }
-        input::placeholder { color: #ccc; -webkit-text-fill-color: #ccc; }
+        /* 透かし文字を濃く設定 */
+        input::placeholder { color: #888; -webkit-text-fill-color: #888; }
 
-        /* Clear Button */
         .clear-btn {
             position: absolute;
-            right: 12px;
-            bottom: 12px;
+            right: 10px;
+            bottom: 15px;
             background: none;
             border: none;
-            color: #ccc;
-            font-size: 1.2rem;
+            color: #888;
+            font-size: 1.4rem;
             font-weight: 800;
             cursor: pointer;
             padding: 5px;
@@ -100,50 +102,50 @@
         .clear-btn.active { display: block; }
         .clear-btn:active { color: var(--main); }
 
-        .sync-icon { font-size: 1.2rem; color: #ccc; font-weight: 800; margin-top: 15px; }
+        .sync-icon { font-size: 1.5rem; color: var(--accent); font-weight: 800; margin-top: 25px; }
 
         /* Quick Table */
         .scale-table {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
             margin-top: 20px;
         }
         .scale-item {
             background: #fff;
-            border: 1px solid #f0f0f0;
-            padding: 12px;
+            border: 2px solid #eee;
+            padding: 15px;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            transition: background 0.1s;
+            transition: border-color 0.1s;
         }
-        .scale-item:active { background: var(--accent); transform: scale(0.97); }
-        .px-v { font-size: 0.9rem; font-weight: 800; }
-        .rem-v { font-size: 0.8rem; font-weight: 600; color: #999; }
+        .scale-item:active { background: var(--input-bg); border-color: var(--accent); transform: scale(0.97); }
+        .px-v { font-size: 1rem; font-weight: 800; }
+        .rem-v { font-size: 0.9rem; font-weight: 700; color: var(--text-gray); }
 
         /* Toast Message */
         #toast {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             background: var(--main); color: #fff;
-            padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+            padding: 12px 24px; border-radius: 20px; font-size: 0.9rem; font-weight: 700;
             opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1000;
         }
 
-        footer { margin-top: 50px; font-size: 11px; color: #aaa; line-height: 1.8; }
-        footer a { color: inherit; text-decoration: none; }
+        footer { margin-top: 60px; font-size: 12px; color: #777; line-height: 1.8; font-weight: 500; }
+        footer a { color: inherit; text-decoration: underline; }
         .footer-btns { margin-top: 30px; }
         .kofi-btn {
             display: inline-block; background: var(--main); color: #fff;
-            padding: 12px 25px; border-radius: var(--radius);
-            text-decoration: none; font-weight: bold; font-size: 14px; margin-bottom: 12px;
+            padding: 14px 28px; border-radius: var(--radius);
+            text-decoration: none; font-weight: bold; font-size: 15px; margin-bottom: 15px;
         }
         .home-btn {
-            display: block; width: 60%; margin: 0 auto; background: var(--accent);
-            color: var(--main); border: none; padding: 10px;
-            border-radius: var(--radius); font-weight: 700; font-size: 13px; cursor: pointer;
+            display: block; width: 70%; margin: 0 auto; background: var(--accent);
+            color: var(--main); border: none; padding: 12px;
+            border-radius: var(--radius); font-weight: 800; font-size: 14px; cursor: pointer;
         }
 
         #modal {
@@ -151,10 +153,10 @@
             background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 100;
         }
         .modal-content {
-            background: #fff; width: 85%; max-width: 320px; padding: 30px;
+            background: #fff; width: 85%; max-width: 340px; padding: 35px;
             border-radius: var(--radius); text-align: left; position: relative;
         }
-        .close-x { position: absolute; top: 15px; right: 20px; font-size: 20px; color: #ccc; cursor: pointer; }
+        .close-x { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #888; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -177,7 +179,7 @@
     <div class="input-row">
         <div class="input-group">
             <span class="input-label">REM</span>
-            <input type="text" id="remInput" placeholder="1" inputmode="decimal" oninput="handleInput('rem')">
+            <input type="text" id="remInput" placeholder="1.0" inputmode="decimal" oninput="handleInput('rem')">
             <button class="clear-btn" id="clr-rem" onclick="clearAll()">×</button>
         </div>
         <div class="sync-icon">⇄</div>
@@ -188,7 +190,7 @@
         </div>
     </div>
 
-    <span class="base-label" style="display: block; text-align: left; margin-bottom: 10px;">Quick Scale (Tap to copy)</span>
+    <span class="base-label" style="display: block; text-align: left; margin-bottom: 12px;">Quick Scale (Tap to copy)</span>
     <div class="scale-table" id="scaleTable">
         </div>
 
@@ -239,7 +241,6 @@
         let inputEl = type === 'rem' ? remInput : pxInput;
         let otherEl = type === 'rem' ? pxInput : remInput;
         
-        // Clean non-numeric input but allow decimal and minus
         let val = inputEl.value.replace(/[^0-9.-]/g, '');
         if (inputEl.value !== val) inputEl.value = val;
 
@@ -257,7 +258,6 @@
     }
 
     function updateClearBtns() {
-        const hasVal = remInput.value !== '' || pxInput.value !== '';
         clrRem.classList.toggle('active', remInput.value !== '');
         clrPx.classList.toggle('active', pxInput.value !== '');
     }
