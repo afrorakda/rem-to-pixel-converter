@@ -56,16 +56,18 @@
             background: var(--main); color: #fff; font-size: 1.2rem; font-weight: bold;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
+        .base-btn:active { opacity: 0.8; transform: scale(0.95); }
         .base-val { font-size: 1.2rem; font-weight: 800; min-width: 50px; }
 
         /* Main Inputs */
-        .input-row { display: flex; gap: 15px; margin-bottom: 30px; }
+        .input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
         .input-group { flex: 1; position: relative; text-align: left; }
         .input-label { font-size: 0.7rem; font-weight: 800; color: #bbb; margin-left: 5px; margin-bottom: 5px; display: block; }
         
         input {
             width: 100%;
             padding: 18px;
+            padding-right: 40px; /* space for clear btn */
             border: 2px solid var(--accent);
             border-radius: var(--radius);
             background: var(--input-bg);
@@ -79,6 +81,26 @@
             opacity: 1 !important;
         }
         input::placeholder { color: #ccc; -webkit-text-fill-color: #ccc; }
+
+        /* Clear Button */
+        .clear-btn {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            padding: 5px;
+            display: none;
+            z-index: 2;
+        }
+        .clear-btn.active { display: block; }
+        .clear-btn:active { color: var(--main); }
+
+        .sync-icon { font-size: 1.2rem; color: #ccc; font-weight: 800; margin-top: 15px; }
 
         /* Quick Table */
         .scale-table {
@@ -104,9 +126,10 @@
 
         /* Toast Message */
         #toast {
-            position: fixed; top: 20px; background: var(--main); color: #fff;
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--main); color: #fff;
             padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
-            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1000;
         }
 
         footer { margin-top: 50px; font-size: 11px; color: #aaa; line-height: 1.8; }
@@ -139,7 +162,7 @@
 <div id="toast">Copied!</div>
 
 <div class="container">
-    <h1>Rem to Px</h1>
+    <h1>Rem to Pixel</h1>
     <p class="subtitle">Unit converter for modern developers.</p>
 
     <div class="base-config">
@@ -154,12 +177,14 @@
     <div class="input-row">
         <div class="input-group">
             <span class="input-label">REM</span>
-            <input type="number" id="remInput" placeholder="1" step="0.1" oninput="convert('rem')">
+            <input type="text" id="remInput" placeholder="1" inputmode="decimal" oninput="handleInput('rem')">
+            <button class="clear-btn" id="clr-rem" onclick="clearAll()">×</button>
         </div>
-        <div class="input-group" style="display: flex; align-items: center; justify-content: center; padding-top: 20px; color: #ccc; font-weight: 800;">=</div>
+        <div class="sync-icon">⇄</div>
         <div class="input-group">
             <span class="input-label">PX</span>
-            <input type="number" id="pxInput" placeholder="16" oninput="convert('px')">
+            <input type="text" id="pxInput" placeholder="16" inputmode="decimal" oninput="handleInput('px')">
+            <button class="clear-btn" id="clr-px" onclick="clearAll()">×</button>
         </div>
     </div>
 
@@ -192,6 +217,8 @@
     let baseSize = 16;
     const remInput = document.getElementById('remInput');
     const pxInput = document.getElementById('pxInput');
+    const clrRem = document.getElementById('clr-rem');
+    const clrPx = document.getElementById('clr-px');
     const baseDisplay = document.getElementById('baseDisplay');
     const scaleTable = document.getElementById('scaleTable');
     const toast = document.getElementById('toast');
@@ -200,26 +227,46 @@
         baseSize += delta;
         if (baseSize < 1) baseSize = 1;
         baseDisplay.innerText = baseSize + 'px';
-        convert('rem'); // Recalculate based on current rem
+        if (remInput.value !== '') {
+            handleInput('rem');
+        } else if (pxInput.value !== '') {
+            handleInput('px');
+        }
         renderTable();
     }
 
-    function convert(type) {
-        if (type === 'rem') {
-            const val = parseFloat(remInput.value);
-            if (!isNaN(val)) {
-                pxInput.value = parseFloat((val * baseSize).toFixed(2));
+    function handleInput(type) {
+        let inputEl = type === 'rem' ? remInput : pxInput;
+        let otherEl = type === 'rem' ? pxInput : remInput;
+        
+        // Clean non-numeric input but allow decimal and minus
+        let val = inputEl.value.replace(/[^0-9.-]/g, '');
+        if (inputEl.value !== val) inputEl.value = val;
+
+        const num = parseFloat(val);
+        if (!isNaN(num)) {
+            if (type === 'rem') {
+                otherEl.value = parseFloat((num * baseSize).toFixed(2));
             } else {
-                pxInput.value = '';
+                otherEl.value = parseFloat((num / baseSize).toFixed(4));
             }
         } else {
-            const val = parseFloat(pxInput.value);
-            if (!isNaN(val)) {
-                remInput.value = parseFloat((val / baseSize).toFixed(4));
-            } else {
-                remInput.value = '';
-            }
+            otherEl.value = '';
         }
+        updateClearBtns();
+    }
+
+    function updateClearBtns() {
+        const hasVal = remInput.value !== '' || pxInput.value !== '';
+        clrRem.classList.toggle('active', remInput.value !== '');
+        clrPx.classList.toggle('active', pxInput.value !== '');
+    }
+
+    function clearAll() {
+        remInput.value = '';
+        pxInput.value = '';
+        updateClearBtns();
+        remInput.focus();
     }
 
     function renderTable() {
@@ -249,7 +296,11 @@
     function showModal() { document.getElementById('modal').style.display = 'flex'; }
     function hideModal() { document.getElementById('modal').style.display = 'none'; }
 
-    renderTable();
+    init();
+
+    function init() {
+        renderTable();
+    }
 </script>
 
 </body>
