@@ -12,10 +12,10 @@
         :root {
             --main: #333;
             --bg: #fff;
-            --accent: #ccc; /* 濃く修正 */
+            --accent: #ccc;
             --input-bg: #fafafa;
             --radius: 15px;
-            --text-gray: #666; /* 視認性向上のための濃いグレー */
+            --text-gray: #666;
         }
 
         body {
@@ -40,7 +40,6 @@
         h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
         .subtitle { font-size: 1rem; color: var(--text-gray); font-weight: 600; margin-bottom: 30px; }
 
-        /* Base Size Config */
         .base-config {
             background: var(--input-bg);
             padding: 18px;
@@ -57,11 +56,12 @@
             width: 40px; height: 40px; border-radius: 10px; border: none;
             background: var(--main); color: #fff; font-size: 1.4rem; font-weight: bold;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
+            /* ズーム防止策 */
+            touch-action: manipulation;
         }
         .base-btn:active { opacity: 0.8; transform: scale(0.95); }
         .base-val { font-size: 1.4rem; font-weight: 800; min-width: 60px; }
 
-        /* Main Inputs */
         .input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
         .input-group { flex: 1; position: relative; text-align: left; }
         .input-label { font-size: 0.9rem; font-weight: 800; color: var(--main); margin-left: 5px; margin-bottom: 8px; display: block; }
@@ -82,7 +82,6 @@
             -webkit-text-fill-color: var(--main) !important;
             opacity: 1 !important;
         }
-        /* 透かし文字を濃く設定 */
         input::placeholder { color: #888; -webkit-text-fill-color: #888; }
 
         .clear-btn {
@@ -100,11 +99,9 @@
             z-index: 2;
         }
         .clear-btn.active { display: block; }
-        .clear-btn:active { color: var(--main); }
 
         .sync-icon { font-size: 1.5rem; color: var(--accent); font-weight: 800; margin-top: 25px; }
 
-        /* Quick Table */
         .scale-table {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -126,7 +123,6 @@
         .px-v { font-size: 1rem; font-weight: 800; }
         .rem-v { font-size: 0.9rem; font-weight: 700; color: var(--text-gray); }
 
-        /* Toast Message */
         #toast {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             background: var(--main); color: #fff;
